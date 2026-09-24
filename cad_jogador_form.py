@@ -1,0 +1,75 @@
+import sys
+from PyQt5.QtWidgets import QApplication, QMessageBox, QDialog
+from PyQt5 import uic
+from conexao_mysql import ConexaoMySQL
+
+class CadastroDialog(QDialog):
+    #metodo/funçao construtora
+    def __init__(self):
+        super().__init__()
+        #Carrega o Arquivo Design
+        uic.loadUi("cad_jogador_form.ui",self)
+        #Criando ação do botão "Cadastrar"
+        self.btnCadastrar.clicked.connect(lambda:self.salvar())
+
+    #Exibe Mensagem do PyQT:
+    #Tipos de ícone: QMessageBox.Wargning, QMessageBox.Information, QMessageBox.Critical
+    def exibir_status(self,titulo, mensagem, icone):
+        dialog = QMessageBox(self)
+        #Titulo da Janela
+        dialog.setWindowTitle(titulo)
+        #mensagem principal da janela
+        dialog.setText(mensagem)
+        #informa o tipo da mensagem
+        dialog.setIcon(icone)
+        #Adiciona o bitão de "OK"
+        dialog.setStandardButtons(QMessageBox.Ok)
+        #executa a tela
+        dialog.exec_()
+
+
+
+    #Função que realiza o cadastro no Banco de dados
+    def salvar(self):
+        #Passo 1: Pegar dados do formulário
+        nome_jogador=''
+        salario=''
+        data_fim_contrato=''
+        posicao=''
+        #Recebendo o que foi digitado em txtNomeClube
+        nome_jogador=self.txtNomeJogador.text().strip()
+        #Recebendo o que foi digitado em txtCidade
+        salario=self.txtSalario.text().strip()
+        data_fim_contrato=self.txtDataFimContrato.selectDate()
+        cmbPosicao=self.cmbPosicao.currentText()
+
+        #Passo 2: Realizar a validação
+        #O usuário digitou os valores corretos no formulário
+        if (nome_jogador==''or salario=='' or data_fim_contrato=='' or posicao==''):
+            self.exibir_status('Erro', "Há dados incompletos", QMessageBox.Warning)
+
+        else: #o usuário digitou os valores corrtamente
+            try:
+                #obtendo uma conexão com BD e armazenando na variável con
+                con=ConexaoMySQL("localhost","campeonato","root","")    
+                #conectando ao banco de dados
+                con.conectar()
+                #inserindo os valores no banco de dados
+                con.inserir("INSERT INTO time (nome,cidade) VALUE (%s,%s)",
+                            (nome_clube,cidade))
+                self.exibir_status('Sucesso', "Cadastrado com Sucesso", QMessageBox.Information)
+            except Exception as erro: #erro na conexão
+                print(f"Erro: {erro}")
+            finally: #acionado sempre ao final (finally é opcional)
+                #desconecta do BD
+                con.desconectar()
+
+
+
+
+
+if __name__ =="__main__":
+    app=QApplication(sys.argv) #Cria um objeto QApplication
+    janela= CadastroDialog()
+    janela.show() #carrega a janela feita no qtDesigner
+    sys.exit(app.exec_()) #fecha o program quando o usuario fecha a janela  
