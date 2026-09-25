@@ -58,7 +58,8 @@ class CadastroDialog(QDialog):
                 #inserindo os valores no banco de dados
                 con.inserir("INSERT INTO time (nome,cidade) VALUE (%s,%s)",
                             (nome_clube,cidade))
-                self.exibir_status('Sucesso', "Cadastrado com Sucesso", QMessageBox.Information)
+                self.exibir_status('Sucesso', "Jogador cadastrado com sucesso!", QMessageBox.Information)
+
             except Exception as erro: #erro na conexão
                 print(f"Erro: {erro}")
             finally: #acionado sempre ao final (finally é opcional)
