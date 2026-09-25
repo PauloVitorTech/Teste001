@@ -40,8 +40,9 @@ class CadastroDialog(QDialog):
         nome_jogador=self.txtNomeJogador.text().strip()
         #Recebendo o que foi digitado em txtCidade
         salario=self.txtSalario.text().strip()
-        data_fim_contrato=self.txtDataFimContrato.selectDate()
-        cmbPosicao=self.cmbPosicao.currentText()
+        data_fim_contrato=self.txtDataFimContrato.selectedDate()
+        posicao=self.cmbPosicao.currentText()
+
 
         #Passo 2: Realizar a validação
         #O usuário digitou os valores corretos no formulário
